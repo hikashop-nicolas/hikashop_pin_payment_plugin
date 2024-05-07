@@ -95,11 +95,9 @@ class plgHikashoppaymentPin extends hikashopPaymentPlugin
      */
     public function __construct(&$subject, $config)
     {
-        $app = JFactory::getApplication();
 
-        if ($app->isSite()) {
-            $jinput = $app->input;
-            $this->noForm = $jinput->getInt('noform', 1);
+        if (hikashop_isClient('site')) {
+            $this->noForm = hikaInput::get()->getInt('noform', 1);
 
             $this->loadLibraries();
             $this->gateway = Omnipay::create('Pin');
@@ -200,11 +198,9 @@ class plgHikashoppaymentPin extends hikashopPaymentPlugin
     {
         $method->custom_html = '';
 
-        $app = JFactory::getApplication();
-        $jinput = $app->input;
 
-        $ajax = $jinput->get('tmpl', '') === 'ajax';
-        $blockTask = $jinput->get('blocktask', '');
+        $ajax = hikaInput::get()->getCmd('tmpl', '') === 'ajax';
+        $blockTask = hikaInput::get()->getCmd('blocktask', '');
 
         if (!$ajax || $blockTask == 'payment') {
             $formPath = __DIR__ . DIRECTORY_SEPARATOR . 'assets' . DIRECTORY_SEPARATOR . 'paymentform.php';
@@ -473,10 +469,8 @@ class plgHikashoppaymentPin extends hikashopPaymentPlugin
         }
 
         //Add javascript
-        $app = JFactory::getApplication();
-        $jinput = $app->input;
 
-        $ajax = $jinput->get('tmpl', '') === 'ajax';
+        $ajax = hikaInput::get()->getCmd('tmpl', '') === 'ajax';
 
         if (!$ajax) {
             $this->addScripts();
@@ -503,9 +497,7 @@ class plgHikashoppaymentPin extends hikashopPaymentPlugin
     function onPaymentSave(&$cart, &$rates, &$payment_id)
     {
         $cart->cart_payment_id = $payment_id;
-        $app = JFactory::getApplication();
-        $jinput = $app->input;
-        $token = $jinput->getString('card_token', '');
+        $token = hikaInput::get()->getString('card_token', '');
 
         $payment = $cart->payment;
         $paymentType = '';
