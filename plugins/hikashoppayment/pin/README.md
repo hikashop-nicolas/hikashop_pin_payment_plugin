@@ -4,7 +4,7 @@ Install in /plugins/hikashoppayment/pin/
 
 Developed for/on
 ----------------
-Joomla! 3.x, 4.x and 5.x (PHP 8 compatible)
+Joomla! 3.8+, 4.x, 5.x and 6.x (PHP 8 compatible)
 HikaShop (any edition)
 
 Uses

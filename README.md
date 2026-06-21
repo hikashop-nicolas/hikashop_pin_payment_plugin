@@ -10,7 +10,7 @@ then install the zip from the Joomla extension manager (Extensions > Install).
 
 ## Dependencies
 
-* [Joomla!](https://downloads.joomla.org) 3.x, 4.x or 5.x
+* [Joomla!](https://downloads.joomla.org) 3.8+, 4.x, 5.x or 6.x
 * [HikaShop](https://www.hikashop.com) (any edition)
 * PHP 7.4+ (PHP 8 compatible)
 

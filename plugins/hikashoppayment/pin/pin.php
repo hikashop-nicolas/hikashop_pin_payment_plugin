@@ -1,11 +1,15 @@
 <?php
 defined('_JEXEC') or die('Restricted access');
 
+use Joomla\CMS\Factory;
+use Joomla\CMS\Language\Text;
+use Joomla\CMS\Uri\Uri;
+
 /**
  * Pin payment plugin for hikashop
  *
  * @package HikaShop for Joomla!
- * @version 2.0.0
+ * @version 2.0.1
  * @author butterfly
  */
 class plgHikashoppaymentPin extends hikashopPaymentPlugin
@@ -127,7 +131,7 @@ class plgHikashoppaymentPin extends hikashopPaymentPlugin
         }
         $addedScripts = true;
 
-        $doc = JFactory::getDocument();
+        $doc = Factory::getDocument();
         $scripts = array(
             $this->getHostedFieldJsUrl()
         );
@@ -137,7 +141,7 @@ class plgHikashoppaymentPin extends hikashopPaymentPlugin
         }
 
         //Styling
-        $url = JUri::root() . 'plugins/hikashoppayment/pin/assets/style.css';
+        $url = Uri::root() . 'plugins/hikashoppayment/pin/assets/style.css';
         $doc->addStyleSheet($url);
         //
 
@@ -164,7 +168,7 @@ class plgHikashoppaymentPin extends hikashopPaymentPlugin
 
         $this->paymentFormParams['billing_address'] = $this->extractAddress($order);
 
-        $doc = JFactory::getDocument();
+        $doc = Factory::getDocument();
 
         $jsPath = __DIR__ . DIRECTORY_SEPARATOR . 'assets' . DIRECTORY_SEPARATOR . 'script.js.php';
         ob_start();
@@ -283,7 +287,7 @@ class plgHikashoppaymentPin extends hikashopPaymentPlugin
     protected function processPayment($token, $total, $description = '')
     {
         if (!strlen($token)) {
-            $this->app->enqueueMessage(JText::_('PLG_HIKASHOPPAYMENT_PIN_ERROR_NO_TOKEN'), 'error');
+            $this->app->enqueueMessage(Text::_('PLG_HIKASHOPPAYMENT_PIN_ERROR_NO_TOKEN'), 'error');
             return false;
         }
 
@@ -330,7 +334,7 @@ class plgHikashoppaymentPin extends hikashopPaymentPlugin
                 $message = !empty($response->error_description) ? $response->error_description : @$response->error;
             }
             if (!strlen($message)) {
-                $message = JText::_('PLG_HIKASHOPPAYMENT_PIN_ERROR_NO_TOKEN');
+                $message = Text::_('PLG_HIKASHOPPAYMENT_PIN_ERROR_NO_TOKEN');
             }
             $this->app->enqueueMessage($message, 'error');
             return false;
@@ -356,7 +360,7 @@ class plgHikashoppaymentPin extends hikashopPaymentPlugin
             return true;
         }
         if (empty($this->payment_params->api_key)) {
-            $this->app->enqueueMessage(JText::_('PLG_HIKASHOPPAYMENT_PIN_CHECK_CONFIG'), 'error');
+            $this->app->enqueueMessage(Text::_('PLG_HIKASHOPPAYMENT_PIN_CHECK_CONFIG'), 'error');
             $do = false;
         }
 
@@ -364,7 +368,7 @@ class plgHikashoppaymentPin extends hikashopPaymentPlugin
             /** @var hikashopPaymentClass $paymentClass */
             $paymentClass = hikashop_get('class.payment');
             $paymentClass->readCC();
-            $app = JFactory::getApplication();
+            $app = Factory::getApplication();
 
             $token = $app->getUserState(HIKASHOP_COMPONENT . '.pinct');
             $app->setUserState(HIKASHOP_COMPONENT . '.pinct', '');
@@ -393,7 +397,7 @@ class plgHikashoppaymentPin extends hikashopPaymentPlugin
                 $history = new stdClass();
                 $history->notified = 0;
                 $history->amount = round($order->cart->full_total->prices[0]->price_value_with_tax, 2) . $this->currency->currency_code;
-                $history->data = JText::sprintf('PLG_HIKASHOPPAYMENT_PIN_REF', $orderRef, $responseToken);
+                $history->data = Text::sprintf('PLG_HIKASHOPPAYMENT_PIN_REF', $orderRef, $responseToken);
 
                 $this->modifyOrder($order, $this->payment_params->verified_status, $history, true);
             } else {
@@ -442,8 +446,8 @@ class plgHikashoppaymentPin extends hikashopPaymentPlugin
     public function onPaymentConfigurationSave(&$element)
     {
         if (empty($element->payment_params->api_key)) {
-            $app = JFactory::getApplication();
-            $app->enqueueMessage(JText::_('PLG_HIKASHOPPAYMENT_PIN_API_KEY_ERROR'), 'error');
+            $app = Factory::getApplication();
+            $app->enqueueMessage(Text::_('PLG_HIKASHOPPAYMENT_PIN_API_KEY_ERROR'), 'error');
             return false;
         }
         return true;

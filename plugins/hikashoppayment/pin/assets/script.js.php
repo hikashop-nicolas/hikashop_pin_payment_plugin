@@ -87,19 +87,19 @@
                 fields: {
                     name: {
                         selector: '#plg_hikashoppayment_pin_fields<?php echo $method->payment_id; ?> #pin_name_<?php echo $method->payment_id; ?>',
-                        placeholder: '<?php echo json_encode(JText::_('PLG_HIKASHOPPAYMENT_PIN_FIELD_PH_NAME')); ?>'
+                        placeholder: '<?php echo json_encode(\Joomla\CMS\Language\Text::_('PLG_HIKASHOPPAYMENT_PIN_FIELD_PH_NAME')); ?>'
                     },
                     number: {
                         selector: '#plg_hikashoppayment_pin_fields<?php echo $method->payment_id; ?> #pin_number_<?php echo $method->payment_id; ?>',
-                        placeholder: '<?php echo json_encode(JText::_('PLG_HIKASHOPPAYMENT_PIN_FIELD_PH_NUMBER')); ?>'
+                        placeholder: '<?php echo json_encode(\Joomla\CMS\Language\Text::_('PLG_HIKASHOPPAYMENT_PIN_FIELD_PH_NUMBER')); ?>'
                     },
                     cvc: {
                         selector: '#plg_hikashoppayment_pin_fields<?php echo $method->payment_id; ?> #pin_cvc_<?php echo $method->payment_id; ?>',
-                        placeholder: '<?php echo json_encode(JText::_('PLG_HIKASHOPPAYMENT_PIN_FIELD_PH_CVC')); ?>'
+                        placeholder: '<?php echo json_encode(\Joomla\CMS\Language\Text::_('PLG_HIKASHOPPAYMENT_PIN_FIELD_PH_CVC')); ?>'
                     },
                     expiry: {
                         selector: '#plg_hikashoppayment_pin_fields<?php echo $method->payment_id; ?> #pin_expiry_<?php echo $method->payment_id; ?>',
-                        placeholder: '<?php echo json_encode(JText::_('PLG_HIKASHOPPAYMENT_PIN_FIELD_PH_EXPIRY')); ?>'
+                        placeholder: '<?php echo json_encode(\Joomla\CMS\Language\Text::_('PLG_HIKASHOPPAYMENT_PIN_FIELD_PH_EXPIRY')); ?>'
                     }
                 }
             });

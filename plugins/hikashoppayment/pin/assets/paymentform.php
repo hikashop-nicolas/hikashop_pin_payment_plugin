@@ -22,7 +22,7 @@
     <div id="plg_hikashoppayment_pin_fields<?php echo $method->payment_id; ?>_summary"
          class="hikashop_messages hikashop_info" style="display: none;">
         <ul>
-            <li><?php echo JText::_('PLG_HIKASHOPPAYMENT_PIN_DATA_VALID'); ?></li>
+            <li><?php echo \Joomla\CMS\Language\Text::_('PLG_HIKASHOPPAYMENT_PIN_DATA_VALID'); ?></li>
         </ul>
     </div>
 
@@ -30,7 +30,7 @@
          id="plg_hikashoppayment_pin_fields<?php echo $method->payment_id; ?>_inner" style="opacity: 0">
 
         <label
-            for="pin_name_<?php echo $method->payment_id; ?>"><?php echo JText::_('PLG_HIKASHOPPAYMENT_PIN_FIELD_NAME'); ?></label><br/>
+            for="pin_name_<?php echo $method->payment_id; ?>"><?php echo \Joomla\CMS\Language\Text::_('PLG_HIKASHOPPAYMENT_PIN_FIELD_NAME'); ?></label><br/>
 
         <div id="pin_name_<?php echo $method->payment_id; ?>">
 
@@ -38,7 +38,7 @@
         <div id="errors_for_name<?php echo $method->payment_id; ?>" class="error_message"></div>
 
         <label
-            for="pin_number_<?php echo $method->payment_id; ?>"><?php echo JText::_('PLG_HIKASHOPPAYMENT_PIN_FIELD_NUMBER'); ?></label><br/>
+            for="pin_number_<?php echo $method->payment_id; ?>"><?php echo \Joomla\CMS\Language\Text::_('PLG_HIKASHOPPAYMENT_PIN_FIELD_NUMBER'); ?></label><br/>
 
         <div id="pin_number_<?php echo $method->payment_id; ?>">
 
@@ -46,7 +46,7 @@
         <div id="errors_for_number<?php echo $method->payment_id; ?>" class="error_message"></div>
 
         <label
-            for="pin_cvc_<?php echo $method->payment_id; ?>"><?php echo JText::_('PLG_HIKASHOPPAYMENT_PIN_FIELD_CVC'); ?></label><br/>
+            for="pin_cvc_<?php echo $method->payment_id; ?>"><?php echo \Joomla\CMS\Language\Text::_('PLG_HIKASHOPPAYMENT_PIN_FIELD_CVC'); ?></label><br/>
 
         <div id="pin_cvc_<?php echo $method->payment_id; ?>">
 
@@ -54,7 +54,7 @@
         <div id="errors_for_cvc<?php echo $method->payment_id; ?>" class="error_message"></div>
 
         <label
-            for="pin_expiry_<?php echo $method->payment_id; ?>"><?php echo JText::_('PLG_HIKASHOPPAYMENT_PIN_FIELD_EXPIRY'); ?></label><br/>
+            for="pin_expiry_<?php echo $method->payment_id; ?>"><?php echo \Joomla\CMS\Language\Text::_('PLG_HIKASHOPPAYMENT_PIN_FIELD_EXPIRY'); ?></label><br/>
 
         <div id="pin_expiry_<?php echo $method->payment_id; ?>">
 
@@ -64,5 +64,5 @@
 
     <button id="pinreset_<?php echo $method->payment_id; ?>" class="hikabtn hikabtn_checkout_payment_reset"
             style="visibility: hidden"
-            onclick="return window.pinHikaShopPayments<?php echo $method->payment_id; ?>.resetPayForm();"><?php echo JText::_('PLG_HIKASHOPPAYMENT_PIN_RESETFORM'); ?></button>
+            onclick="return window.pinHikaShopPayments<?php echo $method->payment_id; ?>.resetPayForm();"><?php echo \Joomla\CMS\Language\Text::_('PLG_HIKASHOPPAYMENT_PIN_RESETFORM'); ?></button>
 </div>
