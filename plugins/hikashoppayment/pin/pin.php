@@ -1,12 +1,11 @@
 <?php
 defined('_JEXEC') or die('Restricted access');
-use Omnipay\Omnipay;
 
 /**
  * Pin payment plugin for hikashop
  *
  * @package HikaShop for Joomla!
- * @version 1.0.0
+ * @version 2.0.0
  * @author butterfly
  */
 class plgHikashoppaymentPin extends hikashopPaymentPlugin
@@ -57,13 +56,6 @@ class plgHikashoppaymentPin extends hikashopPaymentPlugin
     var $name = 'pin';
 
     /**
-     * Payment gateway object (using omnipay)
-     *
-     * @var Omnipay\Common\GatewayInterface
-     */
-    private $gateway;
-
-    /**
      * @var string
      */
     private $hostedFieldJsUrl = 'https://cdn.pin.net.au/pin.hosted_fields.v1.js';
@@ -98,9 +90,6 @@ class plgHikashoppaymentPin extends hikashopPaymentPlugin
 
         if (hikashop_isClient('site')) {
             $this->noForm = hikaInput::get()->getInt('noform', 1);
-
-            $this->loadLibraries();
-            $this->gateway = Omnipay::create('Pin');
         }
 
         $currencyPath = __DIR__ . DIRECTORY_SEPARATOR . 'assets' . DIRECTORY_SEPARATOR . 'currencies.php';
@@ -217,20 +206,6 @@ class plgHikashoppaymentPin extends hikashopPaymentPlugin
     }
 
     /**
-     * Load libraries
-     *
-     * @return mixed
-     */
-    private function loadLibraries()
-    {
-        $autoLoaderPath = __DIR__ . DIRECTORY_SEPARATOR . 'libraries' . DIRECTORY_SEPARATOR .
-            DIRECTORY_SEPARATOR . 'vendor' . DIRECTORY_SEPARATOR . 'autoload.php';
-
-        $loader = require($autoLoaderPath);
-        return $loader;
-    }
-
-    /**
      * @param $cart
      * @return mixed
      */
@@ -307,46 +282,65 @@ class plgHikashoppaymentPin extends hikashopPaymentPlugin
      */
     protected function processPayment($token, $total, $description = '')
     {
-        if ($this->currency->currency_locale['int_frac_digits'] > 2) {
-            $this->currency->currency_locale['int_frac_digits'] = 2;
-        }
-        //Total amount in cart
-        $total = round($total, (int)$this->currency->currency_locale['int_frac_digits']);
-
-        $this->gateway->setSecretKey($this->payment_params->secret_key);
-
-        $ip = trim($_SERVER['REMOTE_ADDR']);
-
         if (!strlen($token)) {
             $this->app->enqueueMessage(JText::_('PLG_HIKASHOPPAYMENT_PIN_ERROR_NO_TOKEN'), 'error');
             return false;
         }
 
-        /** @var Omnipay\Pin\Message\PurchaseRequest $purchase */
-        $paymentParams = [
-            'email' => $this->user->user_email,
+        //Pin expects the amount in the currency's base unit (cents for AUD, yen for JPY)
+        $digits = (int)$this->currency->currency_locale['int_frac_digits'];
+        if ($digits > 2) {
+            $digits = 2;
+        }
+        $amount = (int) round($total * pow(10, $digits));
+
+        $data = array(
+            'amount' => $amount,
+            'currency' => strtolower($this->currency->currency_code),
             'description' => $description,
-            'amount' => $total,
-            'currency' => $this->currency->currency_code,
-            'token' => $token,
-            'ip_address' => $ip,
-            'testMode' => $this->payment_params->sandbox
-        ];
-        $purchase = $this->gateway->purchase($paymentParams);
+            'ip_address' => trim($_SERVER['REMOTE_ADDR']),
+            'capture' => 'true',
+            'email' => $this->user->user_email,
+        );
+        //Card tokens are prefixed with card_, customer tokens are not
+        if (strpos($token, 'card_') !== false) {
+            $data['card_token'] = $token;
+        } else {
+            $data['customer_token'] = $token;
+        }
+
+        require_once __DIR__ . DIRECTORY_SEPARATOR . 'pin_api.php';
+        $api = new PinPaymentsAPI(
+            $this->payment_params->secret_key,
+            !empty($this->payment_params->sandbox),
+            !empty($this->payment_params->debug)
+        );
 
         try {
-            /** @var Omnipay\Pin\Message\Response $response */
-            $response = $purchase->send();
-            if (!$response->isSuccessful()) {
-                $this->app->enqueueMessage($response->getMessage(), 'error');
-                return false;
-            }
-            return $response->getTransactionReference();
+            $response = $api->createCharge($data);
         } catch (Exception $e) {
             $this->app->enqueueMessage($e->getMessage(), 'error');
             return false;
         }
-        //
+
+        //Pin returns an "error" key on failure, otherwise response.token holds the charge reference
+        if (!is_object($response) || isset($response->error)) {
+            $message = '';
+            if (is_object($response)) {
+                $message = !empty($response->error_description) ? $response->error_description : @$response->error;
+            }
+            if (!strlen($message)) {
+                $message = JText::_('PLG_HIKASHOPPAYMENT_PIN_ERROR_NO_TOKEN');
+            }
+            $this->app->enqueueMessage($message, 'error');
+            return false;
+        }
+
+        if (isset($response->response->token)) {
+            return $response->response->token;
+        }
+
+        return false;
     }
 
     /**
@@ -507,7 +501,7 @@ class plgHikashoppaymentPin extends hikashopPaymentPlugin
 
         $proceed = strlen($token); // && $paymentType == $this->name;
         if ($proceed) {
-            $app->setUserState(HIKASHOP_COMPONENT . '.pinct', $token);
+            $this->app->setUserState(HIKASHOP_COMPONENT . '.pinct', $token);
         }
 
         return parent::onPaymentSave($cart, $rates, $payment_id);

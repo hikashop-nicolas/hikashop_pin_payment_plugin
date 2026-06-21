@@ -5,17 +5,19 @@ payments via [Pin Payments](https://pinpayments.com).
 
 ## Installation
 
-Download the latest release from [releases](https://github.com/Butterfly-Developer/hikashop_pin_payment_plugin/releases).
-
-Unzip and install in /plugins/hikashoppayment/pin/
+Download the latest release from [releases](https://github.com/hikashop-nicolas/hikashop_pin_payment_plugin/releases),
+then install the zip from the Joomla extension manager (Extensions > Install).
 
 ## Dependencies
 
-* [Joomla!](https://downloads.joomla.org) 3.6.5
-* [HikaShop Starter](https://www.hikashop.com) 3.0.0
-* [OmniPay](https://github.com/thephpleague/omnipay) 2.0
+* [Joomla!](https://downloads.joomla.org) 3.x, 4.x or 5.x
+* [HikaShop](https://www.hikashop.com) (any edition)
+* PHP 7.4+ (PHP 8 compatible)
 
-    $ composer require omnipay/pin:~2.0
+This plugin is self-contained: it has no external Composer dependencies.
+Card payments are sent directly to the
+[Pin Payments charges API](https://pinpayments.com/developers/api-reference)
+over HTTPS, and cards are tokenised in the browser with Pin's hosted fields.
 
 ## Contributing
 
